@@ -28,6 +28,7 @@ def sound_song():
 
 
 def alarm_callback(msg):
+    print(msg.data)
     if msg.data == "play_alarm":
         import pygame
         pygame.init()
@@ -39,7 +40,7 @@ def alarm_callback(msg):
 
         # Stop the playback
         pygame.mixer.music.stop()
-    if msg.data == "play_ohayo":
+    elif msg.data == "play_ohayo":
         import pygame
         pygame.init()
         pygame.mixer.music.load('sound2.mp3')
@@ -50,7 +51,8 @@ def alarm_callback(msg):
 
         # Stop the playback
         pygame.mixer.music.stop()
-    if msg.data == "sound_song":
+
+    elif msg.data == "play_song":
         import pygame
         pygame.init()
         pygame.mixer.music.load('sound3.mp3')
@@ -62,11 +64,15 @@ def alarm_callback(msg):
         # Stop the playback
         pygame.mixer.music.stop()
 
+
 def main():
     rospy.init_node('alarm_node', anonymous=True)
     global pub
     pub = rospy.Publisher('alarm_trigger', String, queue_size=10)
     rospy.Subscriber('alarm_trigger', String, alarm_callback)
+
+    # pub = rospy.Publisher('song_trigger', String, queue_size=10)
+    # rospy.Subscriber('song_trigger', String, song_callback)
     app.run(host='0.0.0.0', port=8000, threaded=True)
 
 if __name__ == '__main__':
