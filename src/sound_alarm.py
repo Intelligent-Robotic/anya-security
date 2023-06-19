@@ -2,8 +2,12 @@
 
 import rospy
 from std_msgs.msg import String
-from flask import Flask
+from flask import Flask, request
 import pygame
+from sound_play.msg import SoundRequest
+from sound_play.libsoundplay import SoundClient
+
+soundhandle = SoundClient()
 
 app = Flask(__name__)
 
@@ -27,6 +31,14 @@ def sound_song():
     return "Song triggered"
 
 
+@app.route('/speech', methods=['GET'])
+def speech():
+    text_value = request.args.get('text', 'no message')
+    soundhandle.say(text_value)
+    return f"speak text :{text_value}"
+
+
+
 def alarm_callback(msg):
     print(msg.data)
     if msg.data == "play_alarm":
@@ -40,6 +52,7 @@ def alarm_callback(msg):
 
         # Stop the playback
         pygame.mixer.music.stop()
+
     elif msg.data == "play_ohayo":
         import pygame
         pygame.init()
@@ -71,8 +84,6 @@ def main():
     pub = rospy.Publisher('alarm_trigger', String, queue_size=10)
     rospy.Subscriber('alarm_trigger', String, alarm_callback)
 
-    # pub = rospy.Publisher('song_trigger', String, queue_size=10)
-    # rospy.Subscriber('song_trigger', String, song_callback)
     app.run(host='0.0.0.0', port=8000, threaded=True)
 
 if __name__ == '__main__':
