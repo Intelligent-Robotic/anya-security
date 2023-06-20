@@ -1,36 +1,31 @@
 import rospy
 from std_msgs.msg import String
 import sound_alarm
-import urllib2
 import socket
+import requests
 
 
 
-def get_current_ip():
-    hostname = socket.gethostname()
-    ip_address = socket.gethostbyname(hostname)
-    return ip_address
-
-current_ip = get_current_ip()
+current_ip="http://10.164.36.238"
 # Base URL
-base_url = f'{current_ip}:8080/recorder/'
+base_url = str(current_ip)+':8080/recorder'
 text=[]
 recording=False
 def result_callback(msg):
     print("Received result:", msg.data)
-    
-    if (msg.data=="record"):
+    text=""
+    if (msg.data=="start"):
         recording=True
-    if (msg.data=="done"):
+    if (msg.data=="complete"):
         # Query parameters
         params = {
             'text': ' '.join(text),
         }
 
         # Construct the URL with query parameters
-        url = base_url + '?' + urllib2.urlencode(params)
-        response = urllib2.urlopen(url)
-        print(response.read())
+        respond = requests.get(base_url,params=params)
+
+        print(respond)
         text=[]
         recording=False
     if recording:

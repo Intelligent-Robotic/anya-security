@@ -6,6 +6,7 @@ from flask import Flask, request
 import pygame
 from sound_play.msg import SoundRequest
 from sound_play.libsoundplay import SoundClient
+import time
 
 soundhandle = SoundClient()
 
@@ -31,11 +32,11 @@ def sound_song():
     return "Song triggered"
 
 
-@app.route('/speech', methods=['GET'])
+@app.route('/speak', methods=['GET'])
 def speech():
     text_value = request.args.get('text', 'no message')
     soundhandle.say(text_value)
-    return f"speak text :{text_value}"
+    return ("speak text :"+text_value)
 
 
 
@@ -48,7 +49,7 @@ def alarm_callback(msg):
         pygame.mixer.music.play()
 
         # Wait for 10 seconds
-        time.sleep(10)
+        time.sleep(2)
 
         # Stop the playback
         pygame.mixer.music.stop()
@@ -60,7 +61,7 @@ def alarm_callback(msg):
         pygame.mixer.music.play()
 
         # Wait for 10 seconds
-        time.sleep(10)
+        time.sleep(2)
 
         # Stop the playback
         pygame.mixer.music.stop()
@@ -72,7 +73,7 @@ def alarm_callback(msg):
         pygame.mixer.music.play()
 
         # Wait for 10 seconds
-        time.sleep(10)
+        time.sleep(2)
 
         # Stop the playback
         pygame.mixer.music.stop()
